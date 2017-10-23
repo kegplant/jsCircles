@@ -4,7 +4,14 @@
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+	<form>
+		On Collision:
+		<div>
+			<input type="radio" name="effects" id="effect1" >disappear
+			<input type="radio" name="effects" id="effect2" >merge
+			<input type="checkbox" id="effect3">change color
+		</div>
+	</form>
 	<svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
 
 	<script>
@@ -12,6 +19,7 @@
 	//var radius=10;
 	function Circle(cx, cy,radius, html_id)
 	{
+		x=getElementById("effect1").value;
 		//https://github.com/kegplant/jsCircles.git
 		this.info = { cx: cx,  cy: cy, r: radius };
 		//private function that generates a random number
@@ -97,6 +105,9 @@
 			var date = new Date();
 			return date.getTime();
 		}
+	function collision(circ1,cir2){
+
+	}
 	var playground = new PlayGround();
 	setInterval(playground.loop, 15);
 
