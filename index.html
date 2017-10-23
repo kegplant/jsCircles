@@ -93,24 +93,6 @@
 		//create one circle when the game starts
 		this.createNewCircle(document.body.clientWidth/2, document.body.clientHeight/2, 10);
 	}
-	function touchRadius(){
-		radius=10;
-		var mousedown_time;
-		var time_pressed=0;
-
-
-		document.onmousedown = function(e){
-			mousedown_time = getTime();
-		}
-		document.onmouseup = function(e){
-			time_pressed = getTime() - mousedown_time;
-			//console.log(time_pressed);
-			
-		}
-		return 
-		//technically we don't even need the mousedown variable but we're leaving it there for now..
-
-	}
 	function getTime(){
 			var date = new Date();
 			return date.getTime();
@@ -118,7 +100,7 @@
 	var playground = new PlayGround();
 	setInterval(playground.loop, 15);
 
-	document.onclick = function(e) {
+	document.onmousedown = function(e) {
 		var mousedown_time = getTime();
 		var time_pressed=0;
 		var radius=10;
