@@ -9,5 +9,14 @@ body{
 #svg{
     height:100%;
     width:100%;
+    border: 1px solid grey;
+    border-radius:5px;
     
+}
+form{
+    position:absolute;
+}
+input, label{
+    padding: 5px;
+    margin: 10px;
 }

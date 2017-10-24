@@ -7,8 +7,8 @@
 	<form>
 		On Collision:
 		<div>
-			<input type="radio" name="effects" id="effect1" >disappear
-			<input type="radio" name="effects" id="effect2" >merge
+			<input type="radio" name="effects" id="effect1" >absorb
+			<input type="radio" name="effects" id="effect2" >bounce
 			<input type="checkbox" id="effect3">change color
 		</div>
 	</form>
@@ -17,9 +17,10 @@
 	<script>
 		//add r to Circle.info; default to radius = 10 right now;
 	//var radius=10;
+	var colors=["blue","red","green","purple","silver","grey"];
 	function Circle(cx, cy,radius, html_id)
 	{
-		x=getElementById("effect1").value;
+		x=document.getElementById("effect1").value;
 		//https://github.com/kegplant/jsCircles.git
 		this.info = { cx: cx,  cy: cy, r: radius };
 		//private function that generates a random number
@@ -71,14 +72,74 @@
 	        var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
 	        for (var k in attrs)
 	        {
-	            el.setAttribute(k, attrs[k]);
+				el.setAttribute(k, attrs[k]);
+				//el.setAttribute(color, "red");
 	        }
 	        return el;
 	    }
 
 	    this.initialize();
 	}
+	function checkCollision(circ1, circ2){
+		var dx=circ1.info.cx-circ2.info.cx;
+		var dy=circ1.info.cy-circ2.info.cy;
+		var dr=(circ1.info.r+circ2.info.r);
+		if(dx**2+dy**2<=dr**2){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	function affectCollisions(circles){
+		for(let i=0; i<circles.length;i++){
+			if(circles[i]!==undefined){
+				for(let j=i+1;j<circles.length;j++){
+					if(circles[j]!==undefined){
+						if(checkCollision(circles[i],circles[j])){
+							console.log("collision between "+i+" and "+j);
+							affectEffects(i,j,circles);
+							console.log(circles);
+						}
+					}
+				}
+			}
+		}
 
+
+	}
+	function affectEffects(i,j,circles){
+		var absorb=document.getElementById("effect1").checked;
+		var bounce=document.getElementById("effect2").checked;
+		var changeColor=document.getElementById("effect3").checked;
+		if(false){//don't use this one
+			delete circles[i];
+			delete circles[j];//might throw an error if j is deleted and then accessed again as i before delete complete, and subsequently had to check i.info when i is undefined
+			document.getElementById(i).remove();
+
+		}
+		if(absorb){//proper absorpsance
+			circles[i].info.r+=circles[j].info.r;
+			el=document.getElementById(i);
+			el.setAttribute("r", circles[i].info.r);
+			delete circles[j];
+			document.getElementById(j).remove();
+
+
+		}
+		if(changeColor){//change color
+			colorNum=Math.floor((Math.random()*6));
+			document.getElementById(i).setAttribute("style", "fill: "+colors[colorNum]);
+			colorNum=Math.floor((Math.random()*6));
+			document.getElementById(j).setAttribute("style", "fill: "+colors[colorNum]);
+		}
+		if(bounce){//reverse direction
+			circles[i].info.cx*=-1;
+			circles[i].info.cy*=-1;
+			circles[j].info.cx*=-1;
+			circles[j].info.cy*=-1;
+		}
+
+	}
 	function PlayGround()
 	{
 		var counter = 0;  //counts the number of circles created
@@ -87,9 +148,12 @@
 		//a loop that updates the circle's position on the screen
 		this.loop = function(){
 			for(circle in circles)
-			{
+			{	
+				if(circle!==undefined){
 				circles[circle].update(1);
+				}
 			}
+			affectCollisions(circles);
 		}
 
 		this.createNewCircle = function(x,y,r){
@@ -118,7 +182,7 @@
 		document.onmouseup = function(e){
 			time_pressed = getTime() - mousedown_time;
 			//console.log(time_pressed);	
-			var r=time_pressed/500*radius;
+			var r=time_pressed/100*radius;
 			playground.createNewCircle(e.x,e.y,r);	
 		}
 
